@@ -35,11 +35,8 @@ add_custom_target(QtRestClient_copy_headers  ALL COMMENT "Copying header files" 
 
 foreach(filepath ${HEADERS})
   get_filename_component(filename ${filepath} NAME)
-  # if ( NOT EXISTS ${FEELMODELS_GENLIB_APPLICATION_DIR}/${filename} )
-  #   file(WRITE ${FEELMODELS_GENLIB_APPLICATION_DIR}/${filename} "") #write empty file
-  # endif()
   add_custom_command(TARGET QtRestClient_copy_headers COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${filepath} ${CMAKE_CURRENT_BINARY_DIR}/../QtRestClient/${filename} )
+    ${CMAKE_CURRENT_SOURCE_DIR}/${filepath} ${CMAKE_CURRENT_BINARY_DIR}/../QtRestClient/${filename} )
 endforeach()
 
 
