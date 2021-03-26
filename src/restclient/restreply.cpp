@@ -138,6 +138,16 @@ RestReplyAwaitable RestReply::awaitable()
 	return RestReplyAwaitable{this};
 }
 
+#include <QtCore/QEventLoop>
+
+void RestReply::waitFinished()
+{
+  QEventLoop loop;
+  connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+  loop.exec();
+}
+
+
 void RestReply::abort()
 {
 	Q_D(RestReply);
@@ -327,6 +337,15 @@ void RestReplyPrivate::run()
 	qCDebug(logReply) << "Received reply with status" << status
 					  << "and content of type" << contentType
 					  << "with length" << contentLength;
+#if 0
+        QList<QByteArray> headerList = networkReply->rawHeaderList();
+        foreach(QByteArray head, headerList) {
+          qDebug() << head << ":" << networkReply->rawHeader(head);
+        }
+        auto bbb = networkReply->readAll();
+        QTextStream out(&bbb/*_file*/);
+        qDebug() << out.readAll();
+#endif
 
 	DataType data{std::nullopt};
 	std::optional<std::pair<int, QString>> parseError = std::nullopt;
@@ -379,7 +398,12 @@ void RestReplyPrivate::run()
 		else
 			Q_UNREACHABLE();
 	} else
-		parseError = std::make_pair(-1, QStringLiteral("Unsupported content type: %1").arg(QString::fromUtf8(contentType)));
+          {
+            //const auto readData = networkReply->readAll()
+            data = networkReply->readAll();
+            qDebug() << QStringLiteral("AAUnsupported content type: %1").arg(QString::fromUtf8(contentType));
+            //parseError = std::make_pair(-1, QStringLiteral("Unsupported content type: %1").arg(QString::fromUtf8(contentType)));
+          }
 
 	//check "http errors", because they can have data, but only if json is valid
 	if (!parseError && status >= 300 && !std::holds_alternative<std::nullopt_t>(data))  // first: status code error + valid data
@@ -398,6 +422,7 @@ void RestReplyPrivate::run()
 	if (retryDelay == 0ms) {
 		retryDelay = -1ms;
 		QMetaObject::invokeMethod(q, "_q_retryReply");
+                return;
 	} else if (retryDelay > 0ms) {
 		qCDebug(logReply) << "Retrying request in"
 						  << retryDelay.count()
@@ -413,8 +438,11 @@ void RestReplyPrivate::run()
 						 sTimer, &QTimer::deleteLater);
 		retryDelay = -1ms;
 		QMetaObject::invokeMethod(sTimer, "start");
+                return;
 	} else if (autoDelete)
 		QMetaObject::invokeMethod(q, "deleteLater");
+
+        Q_EMIT q->finished();
 }
 
 

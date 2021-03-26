@@ -38,6 +38,7 @@ void RestReplyAwaitable::prepare(const std::function<void()> &resume)
 						   [](std::nullopt_t) {
 							   return QVariant{};
 						   },
+                                                   [](QByteArray vData) { return QVariant{vData}; },
 						   [](auto vData) {
 							   return vData.toVariant();
 						   }

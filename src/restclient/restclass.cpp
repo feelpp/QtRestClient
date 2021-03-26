@@ -74,6 +74,19 @@ RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath,
 	}, create(verb, methodPath, body, parameters, headers));
 }
 
+RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QByteArray &body, const QByteArray &contentType, const QVariantHash &parameters, const HeaderHash &headers) const
+{
+  return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+                      Q_D(const RestClass);
+                      return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
+                      return new RestReply{reply, nullptr};
+#endif
+                    }, create(verb, methodPath, body, contentType, parameters, headers));
+}
+
+
 RestReply *RestClass::callRaw(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return std::visit([&](const auto &reply) {
@@ -199,6 +212,22 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString 
 	else
 #endif
 		return cBuilder.send();
+}
+
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString &methodPath, const QByteArray &body, const QByteArray &contentType, const QVariantHash &parameters, const HeaderHash &headers) const
+{
+  auto cBuilder = builder()
+    .addPath(methodPath)
+    .addParameters(RestClassPrivate::hashToQuery(parameters))
+    .addHeaders(headers)
+    .setBody(body,contentType, false)
+    .setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+  if (client()->isThreaded())
+    return cBuilder.sendAsync();
+  else
+#endif
+    return cBuilder.send();
 }
 
 RestClass::CreateResult RestClass::create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const

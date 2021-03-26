@@ -129,6 +129,9 @@ public:
 	//! Returns an awaitable object for this reply
 	RestReplyAwaitable awaitable();
 
+        //! Wait the request finished
+        void waitFinished();
+
 public Q_SLOTS:
 	//! Aborts the request by calling QNetworkReply::abort
 	void abort();
@@ -147,6 +150,8 @@ public Q_SLOTS:
 #endif
 
 Q_SIGNALS:
+        //! Is emitted when the request is finised (completed or error)
+        void finished();
 	//! Is emitted when the request completed, i.e. succeeded or failed
 	void completed(int httpStatus, const DataType &reply, QPrivateSignal);
 	//! Is emitted when the request succeeded

@@ -24,7 +24,7 @@ overload(Ts...) -> overload<Ts...>;
 
 namespace __binder {
 
-using DataType = std::variant<std::nullopt_t, QCborValue, QJsonValue>;
+using DataType = std::variant<std::nullopt_t, QCborValue, QJsonValue, QByteArray>;
 using FunctionType = std::function<void(int, DataType)>;
 
 template <typename... TArgs>
@@ -187,6 +187,29 @@ struct FnBinder<int, QCborArray> {
 		};
 	}
 };
+
+template <>
+struct FnBinder<int, QByteArray> {
+        template <typename TFn>
+        static inline FunctionType bind(TFn &&fn) {
+                return [xFn = std::forward<TFn>(fn)](int code, const DataType &value) {
+                         std::visit(overload {
+                                              [xFn, code](std::nullopt_t){
+                                                xFn(code, QByteArray{});
+                                              },
+                                              [xFn, code](const QCborValue &){
+                                                qCWarning(logGlobal) << "JSON data in CBOR callback - discarding";
+                                              },
+                                              [xFn, code](const QJsonValue &){
+                                                qCWarning(logGlobal) << "JSON data in CBOR callback - discarding";
+                                              },
+                                              [xFn, code](const QByteArray &vValue){
+                                                xFn(code, vValue);
+                                              }
+                           }, value);
+               };
+        }
+  };
 
 template <typename TCbor, typename TJson>
 struct FnBinder<int, std::variant<std::nullopt_t, TCbor, TJson>> {
