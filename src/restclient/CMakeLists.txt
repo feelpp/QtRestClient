@@ -33,11 +33,17 @@ FILE(COPY ${HEADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../QtRestClient)
 
 add_custom_target(QtRestClient_copy_headers  ALL COMMENT "Copying header files"  )
 
+set( HEADERS_COPIED )
 foreach(filepath ${HEADERS})
   get_filename_component(filename ${filepath} NAME)
   add_custom_command(TARGET QtRestClient_copy_headers COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_SOURCE_DIR}/${filepath} ${CMAKE_CURRENT_BINARY_DIR}/../QtRestClient/${filename} )
+  list(APPEND HEADERS_COPIED ${CMAKE_CURRENT_SOURCE_DIR}/${filepath} )
 endforeach()
+  
+set(CMAKE_AUTOMOC 1)
+
+#QT5_WRAP_CPP(qtWrapCpp_MOC_SRCS_QtRestClient ${HEADERS_COPIED} TARGET QtRestClient )
 
 
 set( SOURCES 
@@ -49,6 +55,7 @@ set( SOURCES
   standardpaging.cpp
   ipaging.cpp
   restreplyawaitable.cpp
+ # ${qtWrapCpp_MOC_SRCS_QtRestClient}
   )
 
 
@@ -65,7 +72,8 @@ target_link_libraries(QtRestClient
 
 target_include_directories(QtRestClient
   PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..> #headers
+#  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> #moc
 )
 
 target_compile_definitions( QtRestClient PUBLIC Q_RESTCLIENT_NO_JSON_SERIALIZER )
