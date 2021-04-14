@@ -12,6 +12,7 @@
 
 #include <QtCore/qobject.h>
 
+class QHttpMultiPart;
 namespace QtRestClient {
 
 class RestClassPrivate;
@@ -48,6 +49,7 @@ public:
 	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QByteArray &body, const QByteArray &contentType, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
+	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, QHttpMultiPart *multiPart, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 
 	RestReply *callRaw(const QByteArray &verb, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
 	RestReply *callRaw(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
@@ -217,6 +219,7 @@ private:
 	CreateResult create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
 	CreateResult create(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
 	CreateResult create(const QByteArray &verb, const QString &methodPath, const QByteArray &body, const QByteArray &contentType, const QVariantHash &parameters, const HeaderHash &headers) const;
+	CreateResult create(const QByteArray &verb, const QString &methodPath, QHttpMultiPart *multiPart, const QVariantHash &parameters, const HeaderHash &headers) const;
 	CreateResult create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
 	CreateResult create(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
 	CreateResult create(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;

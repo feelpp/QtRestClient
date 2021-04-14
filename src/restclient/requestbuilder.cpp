@@ -156,6 +156,16 @@ RequestBuilder &RequestBuilder::setBody(QByteArray body, const QByteArray &conte
 	return *this;
 }
 
+RequestBuilder &RequestBuilder::setBody(QHttpMultiPart *multiPart, bool setAccept)
+{
+  d->bodyMultiPart = multiPart;
+  d->postQuery.clear();
+  // d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeCbor);
+  // if (setAccept)
+  //   d->headers.insert(RequestBuilderPrivate::Accept, RequestBuilderPrivate::ContentTypeCbor);
+  return *this;
+}
+
 RequestBuilder &RequestBuilder::setBody(QCborValue body, bool setAccept)
 {
 	d->body = body.toCbor();
@@ -293,6 +303,33 @@ QFuture<QNetworkReply*> RequestBuilder::sendAsync() const
 }
 #endif
 
+QNetworkReply *RequestBuilder::sendMultiPart() const
+{
+  QNetworkRequest request{buildUrl()};
+  auto verb = d->verb;
+  QHttpMultiPart *multiPart = d->bodyMultiPart;
+  d->prepareRequest(request, multiPart);
+  // if (d->extender)
+  //   d->extender->extendRequest(request, verb, &body);
+  return RestReplyPrivate::compatSend(d->nam, request, verb, multiPart);
+}
+#ifdef QT_RESTCLIENT_USE_ASYNC
+QFuture<QNetworkReply*> RequestBuilder::sendMultiPartAsync() const
+{
+  QNetworkRequest request{buildUrl()};
+  auto verb = d->verb;
+  QHttpMultiPart *multiPart = d->bodyMultiPart;
+  d->prepareRequest(request, multiPart);
+  // if (d->extender)
+  //   d->extender->extendRequest(request, verb, &body);
+
+  QFutureInterface<QNetworkReply*> futureIf;
+  qCDebug(logBuilder) << "TODO : implement compatSendAsync in multipart context";
+  //RestReplyPrivate::compatSendAsync(futureIf, d->nam, request, verb, body);
+  return futureIf.future();
+}
+#endif
+
 // ------------- Private Implementation -------------
 
 const QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
@@ -338,6 +375,22 @@ void RequestBuilderPrivate::prepareRequest(QNetworkRequest &request, QByteArray 
 				 !postQuery.isEmpty())
 			*sBody = postQuery.query().toUtf8();
 	}
+}
+
+void RequestBuilderPrivate::prepareRequest(QNetworkRequest &request, QHttpMultiPart *multiPart) const
+{
+  // add headers etc.
+  for (auto it = headers.constBegin(); it != headers.constEnd(); it++)
+    request.setRawHeader(it.key(), it.value());
+  for (auto it = attributes.constBegin(); it != attributes.constEnd(); it++)
+    request.setAttribute(it.key(), it.value());
+#ifndef QT_NO_SSL
+  request.setSslConfiguration(sslConfig);
+#endif
+  qCDebug(logBuilder) << "created request with headers"
+                      << headers.keys()
+                      << "and attributes" << attributes.keys();
+  //multiPart = bodyMultiPart;
 }
 
 RequestBuilder::IExtender::IExtender() = default;

@@ -1,6 +1,8 @@
 #include "restclass.h"
 #include "restclass_p.h"
 #include "restclient.h"
+
+#include <QHttpMultiPart>
 using namespace QtRestClient;
 
 const QByteArray RestClass::GetVerb("GET");
@@ -84,6 +86,21 @@ RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath,
                       return new RestReply{reply, nullptr};
 #endif
                     }, create(verb, methodPath, body, contentType, parameters, headers));
+}
+
+RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, QHttpMultiPart *multiPart, const QVariantHash &parameters, const HeaderHash &headers) const
+{
+  RestReply * restReply = std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+                      Q_D(const RestClass);
+                      return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
+                      return new RestReply{reply, nullptr};
+#endif
+                    }, create(verb, methodPath, multiPart, parameters, headers));
+
+  multiPart->setParent(restReply);// delete the multiPart with the reply
+  return restReply;
 }
 
 
@@ -228,6 +245,22 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString 
   else
 #endif
     return cBuilder.send();
+}
+
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString &methodPath, QHttpMultiPart *multiPart, const QVariantHash &parameters, const HeaderHash &headers) const
+{
+  auto cBuilder = builder()
+    .addPath(methodPath)
+    .addParameters(RestClassPrivate::hashToQuery(parameters))
+    .addHeaders(headers)
+    .setBody(multiPart, false)
+    .setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+  if (client()->isThreaded())
+    return cBuilder.sendMultiPartAsync();
+  else
+#endif
+    return cBuilder.sendMultiPart();
 }
 
 RestClass::CreateResult RestClass::create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const

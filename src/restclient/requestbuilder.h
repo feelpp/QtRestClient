@@ -92,6 +92,9 @@ public:
 
 	//! Sets the content of the generated network request
 	RequestBuilder &setBody(QByteArray body, const QByteArray &contentType, bool setAccept = true);
+
+        RequestBuilder &setBody(QHttpMultiPart *multiPart, bool setAccept = true);
+
 	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &, bool)
 	RequestBuilder &setBody(QCborValue body, bool setAccept = true);
 	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &, bool)
@@ -117,6 +120,12 @@ public:
 #ifdef QT_RESTCLIENT_USE_ASYNC
 	//! Asynchronously creates a network request and sends it with the builder settings
 	QFuture<QNetworkReply*> sendAsync() const;
+#endif
+        //! Creates a network request and sends it with the builder settings (with multipart body)
+        QNetworkReply *sendMultiPart() const;
+#ifdef QT_RESTCLIENT_USE_ASYNC
+        //! Asynchronously creates a network request and sends it with the builder settings (with multipart body)
+        QFuture<QNetworkReply*> sendMultiPartAsync() const;
 #endif
 
 private:

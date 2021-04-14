@@ -46,6 +46,10 @@ public:
 								const QByteArray &verb,
 								const QByteArray &body);
 #endif
+	static QNetworkReply *compatSend(QNetworkAccessManager *nam,
+                                         const QNetworkRequest &request,
+                                         const QByteArray &verb,
+                                         QHttpMultiPart *multiPart);
 
 	QPointer<QNetworkReply> networkReply;
 	bool autoDelete = true;

@@ -262,6 +262,19 @@ void RestReplyPrivate::compatSendAsync(QFutureInterface<QNetworkReply*> futureIf
 }
 #endif
 
+QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, QHttpMultiPart *multiPart)
+{
+  QNetworkReply *reply = nullptr;
+  if ( !multiPart )//body.isEmpty())
+    reply = nam->sendCustomRequest(request, verb);
+  else {
+    reply = nam->sendCustomRequest(request, verb, multiPart);
+    // if (reply)
+    //   reply->setProperty(PropertyBuffer, body);
+  }
+  return reply;
+}
+
 RestReplyPrivate::RestReplyPrivate()
 {
 	setAutoDelete(false);
@@ -401,7 +414,7 @@ void RestReplyPrivate::run()
           {
             //const auto readData = networkReply->readAll()
             data = networkReply->readAll();
-            qDebug() << QStringLiteral("AAUnsupported content type: %1").arg(QString::fromUtf8(contentType));
+            //qDebug() << QStringLiteral("AAUnsupported content type: %1").arg(QString::fromUtf8(contentType));
             //parseError = std::make_pair(-1, QStringLiteral("Unsupported content type: %1").arg(QString::fromUtf8(contentType)));
           }
 

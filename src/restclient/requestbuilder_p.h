@@ -38,10 +38,12 @@ struct Q_RESTCLIENT_EXPORT RequestBuilderPrivate : public QSharedData
 	QSslConfiguration sslConfig;
 #endif
 	QByteArray body;
+        QHttpMultiPart *bodyMultiPart;
 	QByteArray verb;
 	QUrlQuery postQuery;
 
 	void prepareRequest(QNetworkRequest &request, QByteArray *sBody) const;
+	void prepareRequest(QNetworkRequest &request, QHttpMultiPart *sMultiPart) const;
 };
 
 Q_DECLARE_LOGGING_CATEGORY(logBuilder)
