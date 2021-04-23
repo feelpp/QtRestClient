@@ -80,5 +80,11 @@ target_compile_definitions( QtRestClient PUBLIC Q_RESTCLIENT_NO_JSON_SERIALIZER 
 
 set_property(TARGET QtRestClient PROPERTY CXX_STANDARD 17)
 
+include(GNUInstallDirs)
 install(TARGETS QtRestClient
-        EXPORT QtRestClientTargets)
+  EXPORT QtRestClientTargets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  )
+
