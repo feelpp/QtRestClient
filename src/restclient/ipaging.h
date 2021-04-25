@@ -3,6 +3,8 @@
 
 #include "QtRestClient/qtrestclient_global.h"
 
+#include <variant>
+
 #include <QtCore/qjsonarray.h>
 #include <QtCore/qjsonvalue.h>
 #include <QtCore/qcborvalue.h>

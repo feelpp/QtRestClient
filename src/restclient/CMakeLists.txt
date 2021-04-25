@@ -78,6 +78,9 @@ target_include_directories(QtRestClient
 
 target_compile_definitions( QtRestClient PUBLIC Q_RESTCLIENT_NO_JSON_SERIALIZER )
 
+#use QT_BUILD_RESTCLIENT_LIB define only for use export statements instead of import statements
+target_compile_definitions( QtRestClient PRIVATE QT_BUILD_RESTCLIENT_LIB )
+
 set_property(TARGET QtRestClient PROPERTY CXX_STANDARD 17)
 
 include(GNUInstallDirs)
