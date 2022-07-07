@@ -66,8 +66,8 @@ add_dependencies(QtRestClient QtRestClient_copy_headers)
 
 target_link_libraries(QtRestClient
   PRIVATE
-  Qt5::Core Qt5::CorePrivate
-  Qt5::Network
+  Qt::Core Qt::CorePrivate
+  Qt::Network
 )
 
 target_include_directories(QtRestClient

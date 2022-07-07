@@ -109,7 +109,7 @@ RequestBuilder &RequestBuilder::setFragment(QString fragment)
 
 RequestBuilder &RequestBuilder::addPath(const QString &pathSegment)
 {
-	d->path.append(pathSegment.split(QLatin1Char('/'), QString::SkipEmptyParts));
+	d->path.append(pathSegment.split(QLatin1Char('/'), Qt::SkipEmptyParts));
 	return *this;
 }
 
@@ -235,7 +235,7 @@ QUrl RequestBuilder::buildUrl() const
 {
 	auto url = d->base;
 
-	auto pathList = url.path().split(QLatin1Char('/'), QString::SkipEmptyParts);
+	auto pathList = url.path().split(QLatin1Char('/'), Qt::SkipEmptyParts);
 	if (!d->version.isNull())
 		pathList.append(QLatin1Char('v') + d->version.normalized().toString());
 	pathList.append(d->path);

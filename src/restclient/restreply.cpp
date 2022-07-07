@@ -4,6 +4,8 @@
 #include "restreplyawaitable.h"
 #include "requestbuilder_p.h"
 
+#include <QtGlobal>
+#include <QNetworkReply>
 #include <QtCore/QBuffer>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QTimer>
@@ -287,8 +289,14 @@ void RestReplyPrivate::connectReply()
 			this, &RestReplyPrivate::_q_replyFinished);
 
 	// forward some signals
+#if 0
 	QObject::connect(networkReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
 					 q, &RestReply::networkError);
+#else
+	QObject::connect(networkReply, //qConstOverload/*qOverload*/<>(&QNetworkReply::error), //QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+                     &QNetworkReply::errorOccurred,//qConstOverload/*qOverload*/<>(&QNetworkReply::error),
+					 q, &RestReply::networkError);
+#endif
 #ifndef QT_NO_SSL
 	connect(networkReply, &QNetworkReply::sslErrors,
 			this, &RestReplyPrivate::_q_handleSslErrors);

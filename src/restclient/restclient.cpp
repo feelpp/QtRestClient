@@ -37,7 +37,7 @@ RestClient::RestClient(SerializerBase *serializer, QObject *parent) :
 
 RestClass *RestClient::createClass(const QString &path, QObject *parent)
 {
-	return new RestClass{this, path.split(QLatin1Char('/'), QString::SkipEmptyParts), parent};
+	return new RestClass{this, path.split(QLatin1Char('/'), Qt::SkipEmptyParts), parent};
 }
 
 RestClass *RestClient::rootClass() const
@@ -292,8 +292,9 @@ void RestClient::setModernAttributes()
 	Q_D(RestClient);
 	QWriteLocker _{d->threadLock};
 	d->attribs.insert(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
-	d->attribs.insert(QNetworkRequest::SpdyAllowedAttribute, true);
-	d->attribs.insert(QNetworkRequest::HTTP2AllowedAttribute, true);
+	//d->attribs.insert(QNetworkRequest::SpdyAllowedAttribute, true);
+	//d->attribs.insert(QNetworkRequest::HTTP2AllowedAttribute, true);
+    d->attribs.insert(QNetworkRequest::Http2AllowedAttribute, true);
 	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
 
