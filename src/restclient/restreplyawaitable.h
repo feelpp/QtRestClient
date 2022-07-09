@@ -52,9 +52,17 @@ public:
 	const char *what() const noexcept override;
 
 	//! @inherit{QException::raise}
-	virtual Q_NORETURN void raise() const override;
+	virtual Q_NORETURN void raise() const
+#if defined(DOXYGEN_RUN) || (!defined(QT_NO_EXCEPTIONS) && QT_CONFIG(future))
+override
+#endif
+            ;
 	//! @inherit{QException::clone}
-	virtual ExceptionBase *clone() const override;
+	virtual ExceptionBase *clone() const
+#if defined(DOXYGEN_RUN) || (!defined(QT_NO_EXCEPTIONS) && QT_CONFIG(future))
+            override
+#endif
+            ;
 
 protected:
 	//! @private
