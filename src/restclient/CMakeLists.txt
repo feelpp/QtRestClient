@@ -58,14 +58,14 @@ set( SOURCES
 
 
 add_library(QtRestClient  ${SOURCES})
-add_library(Qt::RestClient ALIAS QtRestClient )
+add_library(Qt${QT_VERSION_MAJOR}::RestClient ALIAS QtRestClient )
 
 add_dependencies(QtRestClient QtRestClient_copy_headers)
 
 target_link_libraries(QtRestClient
   PRIVATE
-  Qt::Core Qt::CorePrivate
-  Qt::Network
+  Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::CorePrivate
+  Qt${QT_VERSION_MAJOR}::Network
 )
 
 target_include_directories(QtRestClient
