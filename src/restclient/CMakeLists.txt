@@ -1,5 +1,3 @@
-
-
 set( HEADERS
   pagingmodel.h
   pagingmodel_p.h
@@ -40,13 +38,13 @@ foreach(filepath ${HEADERS})
     ${CMAKE_CURRENT_SOURCE_DIR}/${filepath} ${CMAKE_CURRENT_BINARY_DIR}/../QtRestClient/${filename} )
   list(APPEND HEADERS_COPIED ${CMAKE_CURRENT_SOURCE_DIR}/${filepath} )
 endforeach()
-  
+
 set(CMAKE_AUTOMOC 1)
 
 #QT5_WRAP_CPP(qtWrapCpp_MOC_SRCS_QtRestClient ${HEADERS_COPIED} TARGET QtRestClient )
 
 
-set( SOURCES 
+set( SOURCES
   pagingmodel.cpp
   requestbuilder.cpp
   restclass.cpp
@@ -60,14 +58,14 @@ set( SOURCES
 
 
 add_library(QtRestClient  ${SOURCES})
-add_library(Qt5::RestClient ALIAS QtRestClient )
+add_library(Qt::RestClient ALIAS QtRestClient )
 
 add_dependencies(QtRestClient QtRestClient_copy_headers)
 
 target_link_libraries(QtRestClient
   PRIVATE
-  Qt5::Core Qt5::CorePrivate
-  Qt5::Network
+  Qt::Core Qt::CorePrivate
+  Qt::Network
 )
 
 target_include_directories(QtRestClient
@@ -90,4 +88,3 @@ install(TARGETS QtRestClient
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
-
