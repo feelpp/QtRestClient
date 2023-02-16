@@ -232,7 +232,7 @@ void RestClient::setDataMode(RestClient::DataMode dataMode)
 		return;
 
 	d->dataMode = dataMode;
-	Q_EMIT dataModeChanged(d->dataMode, {});
+	Q_EMIT dataModeChanged(d->dataMode, QPrivateSignal{});
 #endif
 }
 
@@ -244,7 +244,7 @@ void RestClient::setBaseUrl(QUrl baseUrl)
 		return;
 
 	d->baseUrl = std::move(baseUrl);
-	Q_EMIT baseUrlChanged(d->baseUrl, {});
+	Q_EMIT baseUrlChanged(d->baseUrl, QPrivateSignal{});
 }
 
 void RestClient::setApiVersion(QVersionNumber apiVersion)
@@ -255,7 +255,7 @@ void RestClient::setApiVersion(QVersionNumber apiVersion)
 		return;
 
 	d->apiVersion = std::move(apiVersion);
-	Q_EMIT apiVersionChanged(d->apiVersion, {});
+	Q_EMIT apiVersionChanged(d->apiVersion, QPrivateSignal{});
 }
 
 void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
@@ -266,7 +266,7 @@ void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
 		return;
 
 	d->headers = std::move(globalHeaders);
-	Q_EMIT globalHeadersChanged(d->headers, {});
+	Q_EMIT globalHeadersChanged(d->headers, QPrivateSignal{});
 }
 
 void RestClient::setGlobalParameters(QUrlQuery globalParameters)
@@ -277,7 +277,7 @@ void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 		return;
 
 	d->query = std::move(globalParameters);
-	Q_EMIT globalParametersChanged(d->query, {});
+	Q_EMIT globalParametersChanged(d->query, QPrivateSignal{});
 }
 
 void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes)
@@ -288,7 +288,7 @@ void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant
 		return;
 
 	d->attribs = std::move(requestAttributes);
-	Q_EMIT requestAttributesChanged(d->attribs, {});
+	Q_EMIT requestAttributesChanged(d->attribs, QPrivateSignal{});
 }
 
 void RestClient::setModernAttributes()
@@ -304,7 +304,7 @@ void RestClient::setModernAttributes()
 #else
 	d->attribs.insert(QNetworkRequest::Http2AllowedAttribute, true);
 #endif
-	Q_EMIT requestAttributesChanged(d->attribs, {});
+	Q_EMIT requestAttributesChanged(d->attribs, QPrivateSignal{});
 }
 
 void RestClient::setThreaded(bool threaded)
@@ -319,7 +319,7 @@ void RestClient::setThreaded(bool threaded)
 		auto ptr = d->threadLock.fetchAndStoreOrdered(nullptr);
 		delete ptr;
 	}
-	Q_EMIT threadedChanged(d->threadLock, {});
+	Q_EMIT threadedChanged(d->threadLock, QPrivateSignal{});
 }
 
 #ifndef QT_NO_SSL
@@ -331,7 +331,7 @@ void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 		return;
 
 	d->sslConfig = std::move(sslConfiguration);
-	Q_EMIT sslConfigurationChanged(d->sslConfig, {});
+	Q_EMIT sslConfigurationChanged(d->sslConfig, QPrivateSignal{});
 }
 #endif
 
@@ -346,7 +346,7 @@ void RestClient::setAsyncPool(QThreadPool *asyncPool)
 	d->asyncPool = asyncPool;
 	if (d->asyncPool)
 		setThreaded(true);
-	Q_EMIT asyncPoolChanged(d->asyncPool, {});
+	Q_EMIT asyncPoolChanged(d->asyncPool, QPrivateSignal{});
 }
 #endif
 
@@ -355,7 +355,7 @@ void RestClient::addGlobalHeader(const QByteArray &name, const QByteArray &value
 	Q_D(RestClient);
 	QWriteLocker _{d->threadLock};
 	d->headers.insert(name, value);
-	Q_EMIT globalHeadersChanged(d->headers, {});
+	Q_EMIT globalHeadersChanged(d->headers, QPrivateSignal{});
 }
 
 void RestClient::removeGlobalHeader(const QByteArray &name)
@@ -363,7 +363,7 @@ void RestClient::removeGlobalHeader(const QByteArray &name)
 	Q_D(RestClient);
 	QWriteLocker _{d->threadLock};
 	if(d->headers.remove(name) > 0)
-		Q_EMIT globalHeadersChanged(d->headers, {});
+		Q_EMIT globalHeadersChanged(d->headers, QPrivateSignal{});
 }
 
 void RestClient::addGlobalParameter(const QString &name, const QString &value)
@@ -371,7 +371,7 @@ void RestClient::addGlobalParameter(const QString &name, const QString &value)
 	Q_D(RestClient);
 	QWriteLocker _{d->threadLock};
 	d->query.addQueryItem(name, value);
-	Q_EMIT globalParametersChanged(d->query, {});
+	Q_EMIT globalParametersChanged(d->query, QPrivateSignal{});
 }
 
 void RestClient::removeGlobalParameter(const QString &name)
@@ -379,7 +379,7 @@ void RestClient::removeGlobalParameter(const QString &name)
 	Q_D(RestClient);
 	QWriteLocker _{d->threadLock};
 	d->query.removeQueryItem(name);
-	Q_EMIT globalParametersChanged(d->query, {});
+	Q_EMIT globalParametersChanged(d->query, QPrivateSignal{});
 }
 
 void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, const QVariant &value)
@@ -387,7 +387,7 @@ void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, const
 	Q_D(RestClient);
 	QWriteLocker _{d->threadLock};
 	d->attribs.insert(attribute, value);
-	Q_EMIT requestAttributesChanged(d->attribs, {});
+	Q_EMIT requestAttributesChanged(d->attribs, QPrivateSignal{});
 }
 
 void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
@@ -395,7 +395,7 @@ void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
 	Q_D(RestClient);
 	QWriteLocker _{d->threadLock};
 	d->attribs.remove(attribute);
-	Q_EMIT requestAttributesChanged(d->attribs, {});
+	Q_EMIT requestAttributesChanged(d->attribs, QPrivateSignal{});
 }
 
 RestClient::RestClient(RestClientPrivate &dd, QObject *parent) :

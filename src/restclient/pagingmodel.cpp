@@ -347,7 +347,7 @@ void PagingModelPrivate::requestNext()
 			processError(message, code, errorType);
 		});
 	} else
-		Q_EMIT q->fetchError({});
+		Q_EMIT q->fetchError(PagingModel::QPrivateSignal{});
 }
 
 void PagingModelPrivate::processReply(int, const RestReply::DataType &data)
@@ -443,5 +443,5 @@ void PagingModelPrivate::processError(const QString &message, int code, RestRepl
 	Q_Q(PagingModel);
 	qCCritical(logPagingModel) << "Network request failed with error of type" << errorType
 							   << "and code" << code << "- error message is:" << qUtf8Printable(message);
-	Q_EMIT q->fetchError({});
+	Q_EMIT q->fetchError(PagingModel::QPrivateSignal{});
 }

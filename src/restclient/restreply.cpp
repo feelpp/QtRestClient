@@ -102,7 +102,7 @@ RestReply *RestReply::makeAsync(QThreadPool *threadPool)
 	d->asyncPool = threadPool;
 	if (d->asyncPool)
 		moveToThread(d->asyncPool->thread());
-	Q_EMIT asyncChanged(d->asyncPool, {});
+	Q_EMIT asyncChanged(d->asyncPool, QPrivateSignal{});
 	return this;
 }
 #endif
@@ -178,7 +178,7 @@ void RestReply::setAutoDelete(bool autoDelete)
 		return;
 
 	d->autoDelete = autoDelete;
-	Q_EMIT autoDeleteChanged(autoDelete, {});
+	Q_EMIT autoDeleteChanged(autoDelete, QPrivateSignal{});
 }
 
 void RestReply::setAllowEmptyReplies(bool allowEmptyReplies)
@@ -188,7 +188,7 @@ void RestReply::setAllowEmptyReplies(bool allowEmptyReplies)
 		return;
 
 	d->allowEmptyReplies = allowEmptyReplies;
-	Q_EMIT allowEmptyRepliesChanged(d->allowEmptyReplies, {});
+	Q_EMIT allowEmptyRepliesChanged(d->allowEmptyReplies, QPrivateSignal{});
 }
 
 #ifdef QT_RESTCLIENT_USE_ASYNC
@@ -425,15 +425,15 @@ void RestReplyPrivate::run()
 
 	//check "http errors", because they can have data, but only if json is valid
 	if (!parseError && status >= 300 && !std::holds_alternative<std::nullopt_t>(data))  // first: status code error + valid data
-		Q_EMIT q->failed(status, data, {});
+		Q_EMIT q->failed(status, data, RestReply::QPrivateSignal{});
 	else if (networkReply->error() != QNetworkReply::NoError)  // next: check normal network errors
-		Q_EMIT q->error(networkReply->errorString(), networkReply->error(), Error::Network, {});
+		Q_EMIT q->error(networkReply->errorString(), networkReply->error(), Error::Network, RestReply::QPrivateSignal{});
 	else if (parseError)  {// next: parsing errors
-		Q_EMIT q->error(parseError->second, parseError->first, Error::Parser, {});
+		Q_EMIT q->error(parseError->second, parseError->first, Error::Parser, RestReply::QPrivateSignal{});
 	} else if (status >= 300 && std::holds_alternative<std::nullopt_t>(data))
-		Q_EMIT q->failed(status, data, {});  // only pass as failed without data if any other error does not match
+		Q_EMIT q->failed(status, data, RestReply::QPrivateSignal{});  // only pass as failed without data if any other error does not match
 	else {  // no errors, completed!
-		Q_EMIT q->succeeded(status, data, {});
+		Q_EMIT q->succeeded(status, data, RestReply::QPrivateSignal{});
 		retryDelay = -1ms;
 	}
 
