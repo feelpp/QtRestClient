@@ -45,19 +45,20 @@ public:
 	//general calls (json or cbor based)
 	//! @{
 	//! @brief Performs a API call of the given verb with CBOR or JSON data
-	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
-	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
-	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
-	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QByteArray &body, const QByteArray &contentType, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
-	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, QHttpMultiPart *multiPart, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
+	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false, RequestBuilder::IExtender *extender = nullptr) const;
+	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, RequestBuilder::IExtender *extender = nullptr) const;
+	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, RequestBuilder::IExtender *extender = nullptr) const;
+	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, const QByteArray &body, const QByteArray &contentType, const QVariantHash &parameters = {}, const HeaderHash &headers = {},
+                       RequestBuilder::IExtender *extender = nullptr) const;
+	RestReply *callRaw(const QByteArray &verb, const QString &methodPath, QHttpMultiPart *multiPart, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, RequestBuilder::IExtender *extender = nullptr) const;
 
-	RestReply *callRaw(const QByteArray &verb, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
-	RestReply *callRaw(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
-	RestReply *callRaw(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
+	RestReply *callRaw(const QByteArray &verb, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false, RequestBuilder::IExtender *extender = nullptr) const;
+	RestReply *callRaw(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, RequestBuilder::IExtender *extender = nullptr) const;
+	RestReply *callRaw(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, RequestBuilder::IExtender *extender = nullptr) const;
 
-	RestReply *callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
-	RestReply *callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
-	RestReply *callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
+	RestReply *callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false, RequestBuilder::IExtender *extender = nullptr) const;
+	RestReply *callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, RequestBuilder::IExtender *extender = nullptr) const;
+	RestReply *callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, RequestBuilder::IExtender *extender = nullptr) const;
 	//! @}
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
@@ -215,17 +216,17 @@ private:
 	using CreateResult = std::variant<QNetworkReply*>;
 #endif
 
-	CreateResult create(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
-	CreateResult create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	CreateResult create(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	CreateResult create(const QByteArray &verb, const QString &methodPath, const QByteArray &body, const QByteArray &contentType, const QVariantHash &parameters, const HeaderHash &headers) const;
-	CreateResult create(const QByteArray &verb, const QString &methodPath, QHttpMultiPart *multiPart, const QVariantHash &parameters, const HeaderHash &headers) const;
-	CreateResult create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
-	CreateResult create(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	CreateResult create(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
-	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	CreateResult create(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QString &methodPath, const QByteArray &body, const QByteArray &contentType, const QVariantHash &parameters, const HeaderHash &headers, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QString &methodPath, QHttpMultiPart *multiPart, const QVariantHash &parameters, const HeaderHash &headers, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers, RequestBuilder::IExtender *extender) const;
+	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers, RequestBuilder::IExtender *extender) const;
 };
 
 //! Short macro for RestClass::concatParams(), to make the call shorter

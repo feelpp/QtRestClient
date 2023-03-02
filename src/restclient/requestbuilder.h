@@ -38,6 +38,8 @@ public:
 		virtual bool requiresBody() const;
 		//! Perform additional operations on the request
 		virtual void extendRequest(QNetworkRequest &request, QByteArray &verb, QByteArray *body) const;
+		//! Perform additional operations on the request with multiPart
+        virtual void extendRequest(QNetworkRequest &request, QByteArray &verb, QHttpMultiPart *multiPart) const;
 	};
 
 	//! Constructs a builder with the given base url

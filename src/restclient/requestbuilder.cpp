@@ -317,8 +317,8 @@ QNetworkReply *RequestBuilder::sendMultiPart() const
   auto verb = d->verb;
   QHttpMultiPart *multiPart = d->bodyMultiPart;
   d->prepareRequest(request, multiPart);
-  // if (d->extender)
-  //   d->extender->extendRequest(request, verb, &body);
+  if (d->extender)
+      d->extender->extendRequest(request, verb, multiPart);
   return RestReplyPrivate::compatSend(d->nam, request, verb, multiPart);
 }
 #ifdef QT_RESTCLIENT_USE_ASYNC
@@ -328,11 +328,12 @@ QFuture<QNetworkReply*> RequestBuilder::sendMultiPartAsync() const
   auto verb = d->verb;
   QHttpMultiPart *multiPart = d->bodyMultiPart;
   d->prepareRequest(request, multiPart);
-  // if (d->extender)
-  //   d->extender->extendRequest(request, verb, &body);
+  if (d->extender)
+      d->extender->extendRequest(request, verb, multiPart);
 
   QFutureInterface<QNetworkReply*> futureIf;
   qCDebug(logBuilder) << "TODO : implement compatSendAsync in multipart context";
+  qFatal("TODO : implement compatSendAsync in multipart context");
   //RestReplyPrivate::compatSendAsync(futureIf, d->nam, request, verb, body);
   return futureIf.future();
 }
@@ -413,3 +414,5 @@ bool RequestBuilder::IExtender::requiresBody() const
 }
 
 void RequestBuilder::IExtender::extendRequest(QNetworkRequest &, QByteArray &, QByteArray *) const {}
+
+void RequestBuilder::IExtender::extendRequest(QNetworkRequest &, QByteArray &, QHttpMultiPart *) const {}
